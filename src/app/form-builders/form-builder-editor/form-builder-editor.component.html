@@ -1,0 +1,368 @@
+<div class="main">
+  <div class="w-full header">
+    <div class="d-flex justify-content-between">
+      <div class="home">
+        <img src="../../../assets/images/home icon.svg" />
+      </div>
+      <div>
+        <button class="reset-button">
+          <img src="../../../assets/images/reset.svg" alt="">
+        </button>
+        <button class="save-button">
+          Save
+        </button>
+        <button class="preview-button" (click)="redirictToPreview(1)">
+          <span class="spanClass">
+            <img src="../../../assets/images/preview.svg" height="14px" alt="">
+          </span>
+          <span class="spanClass pt-1 ps-2">
+            Preview
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="row m-0" cdkDropListGroup>
+    <div class="col p-0 h-full d-flex flex-column">
+      <div class="example-container1">
+        <div class="tab d-flex">
+          <div class="col-2 p-0 tab-item" (click)="selectedTab = 'search'"
+            [ngClass]="{'active-tab': selectedTab === 'search'}">
+            <img width="20" height="20" src="../../../assets/images/search.svg" />
+          </div>
+          <div class="col-3 p-0 tab-item" (click)="selectedTab = 'basic'"
+            [ngClass]="{'active-tab': selectedTab === 'basic'}">Basic</div>
+          <div class="col-3 p-0 tab-item" (click)="selectedTab = 'widgets'"
+            [ngClass]="{'active-tab': selectedTab === 'widgets'}">Widgets</div>
+          <div class="col-4 p-0 tab-item" (click)="selectedTab = 'templates'"
+            [ngClass]="{'active-tab': selectedTab === 'templates'}">Templates</div>
+        </div>
+        <div *ngIf="selectedTab === 'search'">
+        </div>
+        <div [hidden]="selectedTab != 'basic'" class="p-2">
+          <div cdkDropList [cdkDropListData]="todo"
+            class="example-list" (cdkDropListDropped)="drop($event)" [cdkDropListEnterPredicate]="noReturnPredicate">
+            <div class="example-box" *ngFor="let item of todo; let index = index" cdkDrag>
+              <div class="image-container">
+                <img src="../../../assets/images/{{item.icon}}.svg" class="image" />
+              </div>
+              <div class="col-9 text-style">
+                {{item.name}}
+              </div>
+              <div class="resizer-icon">
+                <img src="../../../assets/images/item-resize.svg" />
+              </div>
+              <div class="add-box" (click)="addItemInSection(item, index)" title="Add Item Any section after select">
+                +
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="selectedTab === 'widgets'"> Widgets</div>
+        <div *ngIf="selectedTab === 'templates'">
+          <div class="d-block p-3">
+            <img height="300" src="../../../assets/images/templet-1.jpg" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-7 containerbox">
+      <div class="example-container2">
+        <div class="form-view-area" cdkDropList #resizeBy [cdkDropListData]="done"  (cdkDropListDropped)="drop($event)">
+
+          <ng-container *ngIf="done.length == 0">
+            <div class="emptyContainer">
+              <span class="d-block ">
+                Drag & drop your first element here <br><br>
+              </span>
+              <button class="btn custom-button">
+                <img src="../../../assets/images/plus.svg" alt="">
+              </button>
+            </div>
+          </ng-container>
+
+          <div class="box-item" *ngFor="let item of done ; let i = index" cdkDrag
+            [ngClass]="{'active': selectedIndex == i}" >
+            <span class="delete-button" type="button" (click)="deleteSection(i)">
+              <img src="../../../assets/images/roundDelete.svg" alt="">
+            </span>
+            <span class="drag-box" cdkDragHandle>
+              <img src="../../../assets/images/move.svg" alt="">
+            </span>
+            <span class="re-size-icons" resizer contenteditable="false"></span>
+            <div class="row re-size m-0" cdkDropList
+            [cdkDropListData]="item.items" (cdkDropListDropped)="dropItems($event)" >
+              <label *ngIf="item.name == 'Radio' || item.name == 'Checkbox' || item.name == 'StarRating'"
+                [ngStyle]="{'font-family' : item.fontStyle, 'font-size': item.fontSize, 'color' : item.fontColor, 'font-weight' : item.fontWeight,'text-transform' : item.textFormat}">{{item.parentlabel}}<span
+                  *ngIf="item.required == true">*</span></label>
+
+              
+              <div class="section-element col-12"  
+                [ngClass]="{'col-6': (item2.inputType === 'radio' || item2.inputType === 'checkbox' || item2.inputType === 'autocomplete'), 'col-2': (item2.inputType === 'file'), 'col-12' : ( item2.inputType == 'text' && item2?.address) }"
+                *ngFor="let item2 of item.items; let index2 = index" (click)="getItemDetails($event, item2, i, index2)"  cdkDrag >
+                
+                <ng-container *ngIf="item2.preFix && item2.name == 'Full Name'">
+                  <label
+                      [ngStyle]="{'font-family' : item2.fontStyle, 'font-size': item2.fontSize, 'color' : item2.fontColor, 'font-weight' : item2.fontWeight, 'text-transform' : item2.textFormat}">Prefix</label>
+                    <select class="form-control inputstyle">
+                      <option>Mr.</option>
+                      <option>Ms.</option>
+                    </select>
+                </ng-container>
+                <ng-container *ngIf="(item2.inputType == 'text' || item2.inputType == 'email' || item2.inputType == 'number') && (item2.show ? item2.show : true)" >
+                  <label
+                    [ngStyle]="{'font-family' : item2.fontStyle, 'font-size': item2.fontSize, 'color' : item2.fontColor, 'font-weight' : item2.fontWeight, 'text-transform' : item2.textFormat}">{{item2.label}}<span
+                      *ngIf="item2.required == true">*</span></label>
+                  <input class="form-control inputstyle" [style.--color]="item2.fontColor" [type]="item2.inputType"
+                    [max]="item2.max" [min]="item2.min" [placeholder]="item2.placeHolder"
+                    [style]="{'text-align': item.inputAlignment}" [value]="item2.value" [readOnly]="item.readonly" />
+                </ng-container>
+                <ng-container *ngIf="item2.inputType == 'select'">
+                  <label
+                    [ngStyle]="{'font-family' : item2.fontStyle, 'font-size': item2.fontSize, 'color' : item2.fontColor, 'font-weight' : item2.fontWeight,'text-transform' : item2.textFormat}">{{item2.label}}<span
+                      *ngIf="item2.required == true">*</span></label>
+                  <mat-form-field style="width: 100%;" class="dark">
+                    <mat-select [multiple]="item.multiple" [required]="item.required">
+                      <mat-option *ngFor="let option of item2.options"
+                        [value]="option.key">{{option.value}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </ng-container>
+                <ng-container *ngIf="item2.inputType == 'textarea'">
+                  <label
+                    [ngStyle]="{'font-family' : item2.fontStyle, 'font-size': item2.fontSize, 'color' : item2.fontColor, 'font-weight' : item2.fontWeight,'text-transform' : item2.textFormat}">{{item2.label}}<span
+                      *ngIf="item2.required == true">*</span></label>
+                  <textarea class="form-control inputstyle" [placeholder]="item2.placeHolder" [rows]="item.rows"
+                    [style]="{'text-align': item.inputAlignment}" [style.--color]="item.fontColor"
+                    [value]="item2.value"></textarea>
+                </ng-container>
+                <ng-container *ngIf="item2.inputType == 'texteditor'">
+                  <label
+                    [ngStyle]="{'font-family' : item.fontStyle, 'font-size': item.fontSize, 'color' : item.fontColor, 'font-weight' : item.fontWeight,'text-transform' : item.textFormat}">{{item2.label}}<span
+                      *ngIf="item.required == true">*</span></label>
+                  <div class="form-control inputstyle" contenteditable="true" [innerHTML]="test"
+                    [style]="{'text-align': item.inputAlignment}" [style.--color]="item.fontColor">
+                  </div>
+                  <span>b</span><span>i</span><span>u</span>
+                </ng-container>
+                <ng-container *ngIf="item2.inputType == 'date'">
+                  <div class="row">
+                    <div class="col-lg-6">
+                  <label
+                    [ngStyle]="{'font-family' : item2.fontStyle, 'font-size': item2.fontSize, 'color' : item2.fontColor, 'font-weight' : item2.fontWeight,'text-transform' : item2.textFormat}">{{item2.label}}<span
+                      *ngIf="item2.required == true">*</span></label>
+                  <mat-form-field style="width: 100%;" appearance="fill" class="dark-datepicker">
+                    <input matInput [matDatepicker]="picker" [required]="item2.required" style="color: #fff;"
+                      [placeholder]="item2.placeHolder">
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker panelClass='dark-calender'></mat-datepicker>
+                  </mat-form-field>
+                </div>
+                  <div class="col-lg-2" *ngIf="item2.isTimeAvailable">
+                    <label
+                      [ngStyle]="{'font-family' : item2.fontStyle, 'font-size': item2.fontSize, 'color' : item2.fontColor, 'font-weight' : item2.fontWeight, 'text-transform' : item2.textFormat}">Hours</label>
+                    <select class="form-control inputstyle" style="height: 49px;">
+                      <option>00</option>
+                      <option>01</option>
+                      <option>02</option>
+                      <option>03</option>
+                      <option>04</option>
+                      <option>05</option>
+                      <option>06</option>
+                      <option>07</option>
+                      <option>08</option>
+                      <option>09</option>
+                      <option>10</option>
+                      <option>11</option>
+                      <option>12</option>
+                    </select>
+                  </div>
+                  <div class="col-lg-2" *ngIf="item2.isTimeAvailable">
+                    <label
+                      [ngStyle]="{'font-family' : item2.fontStyle, 'font-size': item2.fontSize, 'color' : item2.fontColor, 'font-weight' : item2.fontWeight, 'text-transform' : item2.textFormat}">Minutes</label>
+                    <select class="form-control inputstyle" style="height: 49px;">
+                      <option>00</option>
+                      <option>01</option>
+                      <option>02</option>
+                      <option>03</option>
+                      <option>04</option>
+                      <option>05</option>
+                      <option>06</option>
+                      <option>07</option>
+                      <option>08</option>
+                      <option>09</option>
+                      <option>10</option>
+                      <option>11</option>
+                      <option>12</option>
+                    </select>
+                  </div>
+                  <div class="col-lg-2"  *ngIf="item2.isTimeAvailable">
+                    <label
+                    [ngStyle]="{'font-family' : item2.fontStyle, 'font-size': item2.fontSize, 'color' : item2.fontColor, 'font-weight' : item2.fontWeight, 'text-transform' : item2.textFormat}"></label>
+                    <select class="form-control inputstyle" style="height: 49px;">
+                      <option>AM</option>
+                      <option>PM</option>
+                    </select>
+                  </div>
+                </div>
+                </ng-container>
+                <ng-container *ngIf="item2.inputType == 'radio'">
+                  <label class="checkbox-style"
+                    [ngStyle]="{'font-family' : item2.fontStyle, 'font-size': item2.fontSize, 'color' : item2.fontColor, 'font-weight' : item2.fontWeight}">
+                    <input class="accent" [type]="item2.inputType" [checked]="item2.Selected" name="radioitem{{i}}"
+                      (change)="item2.Selected = !item2.Selected" [disabled]="item.readonly" />
+                    <img *ngIf="item2?.image" width="100" height="100" src="{{item2?.image}}" />
+                    <aside [ngClass]="{'d-block': item2?.image}" *ngIf="!item2?.isother">{{item2.label}}</aside>
+                    <input type="text"
+                      [ngStyle]="{'font-family' : item2.fontStyle, 'font-size': item2.fontSize, 'color' : item2.fontColor, 'font-weight' : item2.fontWeight}"
+                      class="other form-control" style="position: relative !important;" [value]="item2.label"
+                      *ngIf="item2?.isother">
+                  </label>
+                </ng-container>
+
+                <ng-container *ngIf="item2.inputType == 'autocomplete' && item2.label == 'City' && item2.show">
+                  <label
+                    [ngStyle]="{'font-family' : item.fontStyle, 'font-size': item.fontSize, 'color' : item.fontColor, 'font-weight' : item.fontWeight,'text-transform' : item.textFormat}">{{item2.label}}<span
+                      *ngIf="item.required == true">*</span></label>
+                  <mat-form-field style="width: 100%;" class="dark">
+                    <input matInput [placeholder]="item2.placeHolder" [matAutocomplete]="auto" (keyup)="filterCity($event, 'city');">
+                    <mat-autocomplete #auto="matAutocomplete">
+                      <mat-option *ngFor="let state of cityList" [value]="state.name">
+                        <span>{{ state.name }}</span>
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </ng-container>
+
+                <ng-container *ngIf="item2.inputType == 'autocomplete' && item2.label == 'State/Pronvince' && item2.show">
+                  <label
+                    [ngStyle]="{'font-family' : item.fontStyle, 'font-size': item.fontSize, 'color' : item.fontColor, 'font-weight' : item.fontWeight,'text-transform' : item.textFormat}">{{item2.label}}<span
+                      *ngIf="item.required == true">*</span></label>
+                  <mat-form-field style="width: 100%;" class="dark">
+                    <input matInput [placeholder]="item2.placeHolder" [matAutocomplete]="auto" (keyup)="filterCity($event, 'state');">
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="getState($event)">
+                      <mat-option *ngFor="let state of stateList" [value]="state.name">
+                        <span>{{ state.name }}</span>
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </ng-container>
+
+                <ng-container *ngIf="item2.inputType == 'autocomplete' && item2.label == 'Country' && item2.show">
+                  <label [ngStyle]="{'font-family' : item.fontStyle, 'font-size': item.fontSize, 'color' : item.fontColor, 'font-weight' : item.fontWeight,'text-transform' : item.textFormat}">{{item2.label}}<span
+                      *ngIf="item.required == true">*</span></label>
+                  <mat-form-field style="width: 100%;" class="dark">
+                    <input matInput [placeholder]="item2.placeHolder" [matAutocomplete]="auto" (keyup)="filterCity($event, 'country');">
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="getCountry($event)" >
+                      <mat-option *ngFor="let state of countryList"  [value]="state.name">
+                        <span>{{ state.name }}</span>
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </ng-container>
+
+                <ng-container *ngIf="item2.inputType == 'checkbox'">
+                  <div class="mt-2 container">
+                    <div class="col-lg-12">
+                      <label class="checkbox-style"
+                        [ngStyle]="{'font-family' : item.fontStyle, 'font-size': item.fontSize, 'color' : item.fontColor, 'font-weight' : item.fontWeight}">
+                        <input class="accent" [type]="item2.inputType" [checked]="item2.Selected"
+                          (change)="item2.Selected = !item2.Selected" [disabled]="item.readonly">
+                        <img *ngIf="item2?.image" width="100" height="100" src="{{item2?.image}}" />
+                        <aside [ngClass]="{'d-block': item2?.image}" *ngIf="!item2?.isother">{{item2.label}}</aside>
+                        <input type="text" class="other form-control" style="position: relative !important;"
+                          [value]="item2.label" *ngIf="item2?.isother">
+                      </label>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="item2.inputType == 'StarRating'">
+                  <div class="row mt-2">
+                    <div *ngIf="item2.rating">
+                      <ng-container *ngFor="let i of rateConvert(item2.default)">
+                        <mat-icon [ngStyle]="{'color': item2.Ratingcolor}">star</mat-icon>
+                      </ng-container>
+                      <ng-container *ngFor="let i of rateConvert(item2.rating - item2.default)">
+                        <mat-icon >star_border</mat-icon>
+                      </ng-container>
+                    </div>
+                  </div>
+                  <label [ngStyle]="{'font-family' : item2.fontStyle, 'font-size': item2.fontSize, 'color' : item2.fontColor, 'font-weight' : item2.fontWeight,'text-transform' : item2.textFormat}">{{item2.sublabel}}</label>
+                </ng-container>
+
+
+                <ng-container *ngIf=" item2.inputType == 'Number'">
+                  <label
+                    [ngStyle]="{'font-family' : item.fontStyle, 'font-size': item.fontSize, 'color' : item.fontColor, 'font-weight' : item.fontWeight, 'text-transform' : item.textFormat}"
+                    [ngClass]="{'required' : item.required == true}">{{item2.label}}</label>
+                  <div class="row">
+                    <div class="col-md-2" *ngIf="item.code"><input class="form-control inputstyle"
+                        [required]="item.required" /> </div>
+                    <div class="col-md-10">
+                      <input class="form-control inputstyle" [style.--color]="item.fontColor" [type]="item2.inputType"
+                        [placeholder]="item2.placeHolder" [style]="{'text-align': item.inputAlignment}"
+                        [required]="item.required" [value]="item2.value" />
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf=" item2.inputType == 'Number'">
+                  <label
+                    [ngStyle]="{'font-family' : item.fontStyle, 'font-size': item.fontSize, 'color' : item.fontColor, 'font-weight' : item.fontWeight, 'text-transform' : item.textFormat}"
+                    [ngClass]="{'required' : item.required == true}">{{item2.label}}</label>
+                  <div class="row">
+                    <div class="col-md-2" *ngIf="item.code"><input class="form-control inputstyle"
+                        [required]="item.required" /> </div>
+                    <div class="col-md-10">
+                      <input class="form-control inputstyle" [style.--color]="item.fontColor" [type]="item2.inputType"
+                        [placeholder]="item2.placeHolder" [style]="{'text-align': item.inputAlignment}"
+                        [required]="item.required" [value]="item2.value" />
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="item2.inputType == 'file'">
+                  <label class="upload-file">
+                    <img width="50" src="../../../assets/images/upload.svg" />
+                    <div class="d-block">{{item2.label}}</div>
+                    <!-- <input [type]="item2.inputType" /> -->
+                  </label>
+                </ng-container>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col p-0 config-panel">
+
+      <div class="tab d-flex">
+        <div class="col-6 p-0 tab-item" (click)="selectedTab1 = 'Properties'"
+          [ngClass]="{'active-tab': selectedTab1 === 'Properties'}">Properties</div>
+        <div class="col-6 p-0 tab-item" (click)="selectedTab1 = 'Database'"
+          [ngClass]="{'active-tab': selectedTab1 === 'Database'}">Database</div>
+      </div>
+      <div *ngIf="selectedTab1 === 'Properties' && itemDetail != null">
+        <app-confriguration-panel [configuration]="itemDetail" (save)="save($event)"></app-confriguration-panel>
+      </div>
+
+      <!-- <mat-form-field class="example-form-field">
+        <mat-label>Choose a date</mat-label>
+        <input matInput [matDatepicker]="datepicker">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="datepicker" [ngStyle]="{'color': '#fff'}"></mat-datepicker-toggle>
+        <mat-datepicker #datepicker>
+          <mat-datepicker-actions>
+            <input class="form-control" type="time" />
+            <button mat-button matDatepickerCancel>Cancel</button>
+            <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+          </mat-datepicker-actions>
+        </mat-datepicker>
+      </mat-form-field> -->
+
+    </div>
+
+  </div>
+</div>
